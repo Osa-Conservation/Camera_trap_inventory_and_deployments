@@ -24,6 +24,9 @@ jobs:
         with:
           r-version: '4.3.0'
 
+      - name: Install Pandoc
+        uses: r-lib/actions/setup-pandoc@v2
+
       - name: Install system dependencies
         run: |
           sudo apt-get update
