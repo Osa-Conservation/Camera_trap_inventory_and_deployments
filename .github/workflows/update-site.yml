@@ -41,11 +41,13 @@ jobs:
             "ggplot2"
           ))
 
-      - name: Render site
+            - name: Render site
         shell: Rscript {0}
         env:
           GOOGLE_AUTHENTICATION_CREDENTIALS: ${{ secrets.GOOGLE_AUTHENTICATION_CREDENTIALS }}
         run: |
+          dir.create("docs", showWarnings = FALSE)
+          file.create("docs/.nojekyll")
           rmarkdown::render("index.Rmd", output_dir = "docs")
 
       - name: Commit and push updated site
