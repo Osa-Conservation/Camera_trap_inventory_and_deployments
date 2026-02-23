@@ -49,7 +49,7 @@ deployments <- read_sheet(deployments_id)
 
 ```
 
-# Overview
+## Overview
 
 Summary stats here — number of active cameras, projects, deployments, etc.
 ```{r}
@@ -57,7 +57,7 @@ Summary stats here — number of active cameras, projects, deployments, etc.
 cat(nrow(locations), "camera locations across", n_distinct(projects$project_name), "projects")
 ```
 
-# Map {.tabset}
+## Map {.tabset}
 ```{r}
 map_data <- locations %>%
   left_join(deployments, by = "camera_location") %>%
@@ -76,17 +76,17 @@ leaflet(map_data) %>%
   )
 ```
 
-# Projects
+## Projects
 ```{r}
 datatable(projects, filter = "top", rownames = FALSE)
 ```
 
-# Cameras
+## Cameras
 ```{r}
 datatable(cameras, filter = "top", rownames = FALSE)
 ```
 
-# Deployments
+## Deployments
 ```{r}
 datatable(deployments, filter = "top", rownames = FALSE)
 ```
