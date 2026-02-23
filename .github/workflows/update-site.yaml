@@ -42,7 +42,7 @@ jobs:
         run: |
           Rscript -e '
             install.packages(
-              c("rmarkdown", "googlesheets4", "dplyr", "leaflet", "DT", "ggplot2"),
+              c("rmarkdown", "bookdown", googlesheets4", "dplyr", "leaflet", "DT", "ggplot2"),
               repos = "https://packagemanager.posit.co/cran/__linux__/jammy/latest",
               dependencies = TRUE
             )
@@ -53,7 +53,7 @@ jobs:
           Rscript -e '
             dir.create("docs", showWarnings = FALSE)
             file.create("docs/.nojekyll")
-            rmarkdown::render("index.Rmd", output_dir = "docs")
+            bookdown::render_book("index.Rmd", output_dir = "docs")
           '
 
       - name: Commit and push updated site
