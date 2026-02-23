@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 library(googlesheets4)
 library(dplyr)
 library(leaflet)
-library(DT)
+library(DT) 
 library(ggplot2)
 
 #gs4_auth()
