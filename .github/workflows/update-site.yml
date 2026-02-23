@@ -1,4 +1,4 @@
-name: Update Camera Trap Site
+name: Update Camera Trap Site 
 
 on:
   schedule:

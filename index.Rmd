@@ -33,8 +33,6 @@ if (google_creds != "") {
   gs4_auth()
 }
 
-data_path <- "data"
-dir.create(data_path) 
 
 # Sheet IDs (from the URL: /spreadsheets/d/SHEET_ID/edit) 
 projects_id    <- "1LXRDFnJ1dQKpc3I5d_YGNvpKYSHL1pn1NvRzoOpr7aA"
