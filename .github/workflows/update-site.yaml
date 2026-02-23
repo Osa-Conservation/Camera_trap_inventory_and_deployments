@@ -47,8 +47,7 @@ jobs:
             "leaflet",
             "DT",
             "ggplot2"
-          ), repos = "https://packagemanager.posit.co/cran/__linux__/jammy/latest",
-              dependencies = TRUE)'
+          ), repos = "https://packagemanager.posit.co/cran/__linux__/jammy/latest", dependencies = TRUE)'
 
       - name: Render site
         run: |
