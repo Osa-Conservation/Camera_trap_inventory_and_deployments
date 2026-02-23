@@ -9,6 +9,9 @@ jobs:
   build-site:
     runs-on: ubuntu-latest
 
+    env:
+      GOOGLE_AUTHENTICATION_CREDENTIALS: ${{ secrets.GOOGLE_AUTHENTICATION_CREDENTIALS }}
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -30,25 +33,23 @@ jobs:
             libfribidi-dev
 
       - name: Install R packages
-        shell: Rscript {0}
         run: |
-          install.packages(c(
+          Rscript -e 'install.packages(c(
             "rmarkdown",
             "googlesheets4",
             "dplyr",
             "leaflet",
             "DT",
             "ggplot2"
-          ))
+          ))'
 
-            - name: Render site
-        shell: Rscript {0}
-        env:
-          GOOGLE_AUTHENTICATION_CREDENTIALS: ${{ secrets.GOOGLE_AUTHENTICATION_CREDENTIALS }}
+      - name: Render site
         run: |
-          dir.create("docs", showWarnings = FALSE)
-          file.create("docs/.nojekyll")
-          rmarkdown::render("index.Rmd", output_dir = "docs")
+          Rscript -e '
+            dir.create("docs", showWarnings = FALSE)
+            file.create("docs/.nojekyll")
+            rmarkdown::render("index.Rmd", output_dir = "docs")
+          '
 
       - name: Commit and push updated site
         run: |
