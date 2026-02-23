@@ -1,9 +1,12 @@
-name: Update Camera Trap Site 
+name: Update Camera Trap Site
 
 on:
   schedule:
     - cron: '0 6 * * *'
   workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   build-site:
@@ -47,6 +50,7 @@ jobs:
         run: |
           Rscript -e '
             dir.create("docs", showWarnings = FALSE)
+            file.create("docs/.nojekyll")
             rmarkdown::render("index.Rmd", output_dir = "docs")
           '
 
