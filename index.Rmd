@@ -1,0 +1,97 @@
+---
+title: "Osa Conservation Camera Trap Network"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output:
+  html_document:
+    theme: flatly
+    toc: true
+    toc_float: true
+    toc_depth: 1
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(googlesheets4)
+library(dplyr)
+library(leaflet)
+library(DT)
+library(ggplot2)
+
+#gs4_auth()
+
+google_creds <- Sys.getenv("GOOGLE_AUTHENTICATION_CREDENTIALS")
+
+if (google_creds != "") {
+  # Running in GitHub Actions — use service account
+  creds_file <- tempfile(fileext = ".json")
+  writeLines(google_creds, creds_file)
+  gs4_auth(path = creds_file)
+} else {
+  # Running locally — use interactive OAuth
+  gs4_auth()
+}
+
+data_path <- "data"
+dir.create(data_path) 
+
+# Sheet IDs (from the URL: /spreadsheets/d/SHEET_ID/edit) 
+projects_id    <- "1LXRDFnJ1dQKpc3I5d_YGNvpKYSHL1pn1NvRzoOpr7aA"
+cameras_id     <- "1iVzfexgoIjGL4pubrLDrk3KBgRGSCsixZB6T8DljN2E"
+locations_id   <- "1C5zbG5-Dm7BhAI0VYMyXf-p7HtmlviqqV62wImn0Y9Q"
+deployments_id <- "1BGsVa_3ZRr4hxqCG-imqG4UB2voU9UJpB3Nbdk8yTD8"
+
+# Fetch data ----------------------------------------------
+projects    <- read_sheet(projects_id)
+cameras     <- read_sheet(cameras_id)
+locations   <- read_sheet(locations_id)
+deployments <- read_sheet(deployments_id)
+
+```
+
+# Overview
+
+Summary stats here — number of active cameras, projects, deployments, etc.
+```{r}
+# e.g.
+cat(nrow(locations), "camera locations across", n_distinct(projects$project_name), "projects")
+```
+
+# Map {.tabset}
+```{r}
+map_data <- locations %>%
+  left_join(deployments, by = "camera_location") %>%
+  filter(!is.na(latitude), !is.na(longitude))
+
+leaflet(map_data) %>%
+  addProviderTiles("Esri.WorldImagery", group = "Satellite") %>%
+  addProviderTiles("OpenStreetMap", group = "Street") %>%
+  addLayersControl(baseGroups = c("Satellite", "Street")) %>%
+  addCircleMarkers(
+    lng = ~longitude, lat = ~latitude,
+    label = ~camera_location,
+    popup = ~paste0("<b>", camera_location, "</b><br>Project: ", project_name),
+    color = "white", fillColor = "steelblue",
+    fillOpacity = 0.85, radius = 6, weight = 1
+  )
+```
+
+# Projects
+```{r}
+datatable(projects, filter = "top", rownames = FALSE)
+```
+
+# Cameras
+```{r}
+datatable(cameras, filter = "top", rownames = FALSE)
+```
+
+# Deployments
+```{r}
+datatable(deployments, filter = "top", rownames = FALSE)
+```
