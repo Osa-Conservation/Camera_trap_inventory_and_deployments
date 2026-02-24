@@ -54,25 +54,67 @@ Summary stats here — number of active cameras, projects, deployments, etc.
 cat(nrow(locations), "camera locations across", n_distinct(projects$project_name), "projects")
 ```
 
-
 ```{r}
 map_data <- locations %>%
   left_join(deployments, by = "camera_location") %>%
   filter(!is.na(latitude), !is.na(longitude))
 
-leaflet(map_data) %>%
+# Create a colour palette based on project_name
+projects_palette <- colorFactor(
+  palette = "Set1",
+  domain  = map_data$project_name
+)
+
+# Build a named list of project groups for the layer control
+project_groups <- unique(map_data$project_name)
+
+# Base map
+m <- leaflet(map_data) %>%
   addProviderTiles("Esri.WorldImagery", group = "Satellite") %>%
-  addProviderTiles("OpenStreetMap", group = "Street") %>%
-  addLayersControl(baseGroups = c("Satellite", "Street")) %>%
-  addCircleMarkers(
-    lng = ~longitude, lat = ~latitude,
-    label = ~camera_location,
-    popup = ~paste0("<b>", camera_location, "</b><br>Project: ", project_name),
-    color = "white", fillColor = "steelblue",
-    fillOpacity = 0.85, radius = 6, weight = 1
+  addProviderTiles("OpenStreetMap",     group = "Street") %>%
+  addLayersControl(
+    baseGroups   = c("Satellite", "Street"),
+    overlayGroups = project_groups,
+    options = layersControlOptions(collapsed = FALSE)
   )
+
+# Add a separate layer for each project
+for (proj in project_groups) {
+  proj_data <- map_data %>% filter(project_name == proj)
+  m <- m %>%
+    addCircleMarkers(
+      data        = proj_data,
+      group       = proj,
+      lng         = ~longitude,
+      lat         = ~latitude,
+      label       = ~camera_location,
+      popup       = ~paste0(
+        "<b>Location:</b> ", camera_location, "<br>",
+        "<b>Project:</b> ",  project_name,    "<br>",
+        "<b>Lat:</b> ",      round(latitude,  5), "<br>",
+        "<b>Lon:</b> ",      round(longitude, 5)
+      ),
+      color       = "white",
+      fillColor   = ~projects_palette(project_name),
+      fillOpacity = 0.85,
+      radius      = 6,
+      weight      = 1
+    )
+}
+
+# Add legend
+m <- m %>%
+  addLegend(
+    position = "bottomright",
+    pal      = projects_palette,
+    values   = map_data$project_name,
+    title    = "Project"
+  )
+
+m
 ```
 
+# Project data
 
 ```{r}
 datatable(projects, filter = "top", rownames = FALSE)
