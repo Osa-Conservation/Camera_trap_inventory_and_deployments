@@ -4,6 +4,7 @@ date: "`r format(Sys.time(), '%B %d, %Y')`"
 site: bookdown::bookdown_site
 output:
   bookdown::gitbook:
+    split_by: none
     toc_depth: 1
     config:
       toc:
