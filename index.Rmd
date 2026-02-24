@@ -1,16 +1,12 @@
 ---
 title: "Osa Conservation Camera Trap Network"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
-site: bookdown::bookdown_site
-output:
-  bookdown::gitbook:
-    split_by: none
-    toc_depth: 1
-    config:
-      toc:
-        collapse: section
-      toolbar:
-        position: fixed
+output: bookdown::gitbook
+documentclass: book
+biblio-style: apalike
+link-citations: yes
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}

@@ -41,7 +41,7 @@ vignettes/*.pdf
 
 # html files
 docs/*.html
- 
+docs/* 
 
 # translation temp files
 po/*~
