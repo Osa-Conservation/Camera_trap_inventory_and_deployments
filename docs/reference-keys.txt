@@ -1,5 +1,1 @@
 overview
-map
-projects
-cameras
-deployments
