@@ -55,9 +55,16 @@ cat(nrow(locations), "camera locations across", n_distinct(projects$project_name
 ```
 
 ```{r}
+
 map_data <- locations %>%
   left_join(deployments, by = "camera_location") %>%
-  filter(!is.na(latitude), !is.na(longitude))
+  filter(!is.na(latitude), !is.na(longitude)) %>%
+  mutate(
+    camera_location = sapply(camera_location, as.character),
+    project_name    = sapply(project_name,    as.character),
+    latitude        = as.numeric(unlist(latitude)),
+    longitude       = as.numeric(unlist(longitude))
+  )
 
 # Create a colour palette based on project_name
 projects_palette <- colorFactor(
@@ -67,6 +74,9 @@ projects_palette <- colorFactor(
 
 # Build a named list of project groups for the layer control
 project_groups <- unique(map_data$project_name)
+
+# Remove the NA
+project_groups <- project_groups[is.na(project_groups)==F] 
 
 # Base map
 m <- leaflet(map_data) %>%
